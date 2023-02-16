@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\Projekte\GITHUB\NEWFMODSTATEMACHINE\x64\Debug\NEW_FMOD_STATEMACHINE.exe</FullPath>
+      <FullPath>D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\x64\Debug\NEW_FMOD_STATEMACHINE.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

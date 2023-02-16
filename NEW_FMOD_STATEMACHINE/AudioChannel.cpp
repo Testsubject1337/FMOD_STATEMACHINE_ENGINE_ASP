@@ -128,12 +128,15 @@ void AudioChannel::Update(float deltaTime)
 
 		// === PLAYING ---> VIRTUALISING === //
 		// ================================= //
-		/*if (virtualFlag == true) {
-			state = State::VIRTUALISING;
-		}*/
-		if (VirtualCheck(false, deltaTime)) {
+		if (virtualFlag == true) {
+#ifdef _DEBUG
+			std::cout << "STATEMACHINE: Setting State to VIRTUALISING\n";
+#endif
 			state = State::VIRTUALISING;
 		}
+		//if (VirtualCheck(false, deltaTime)) { //Took it out for demonstration Purposes
+		//	state = State::VIRTUALISING;
+		//}
 
 		// ================================= //
 
@@ -161,15 +164,25 @@ void AudioChannel::Update(float deltaTime)
 		break;
 	case AudioChannel::State::VIRTUALISING:
 
+#ifdef _DEBUG
+		std::cout << "STATEMACHINE: CHANNEL IS VIRTUALISING\n";
+#endif
 		RunFadeOut(deltaTime);
 		UpdateParams();
-		if (!VirtualCheck(false, deltaTime)) {
+
+		if (virtualFlag = false)
+		{
 			state = State::PREPLAYING;
 		}
+		//if (!VirtualCheck(false, deltaTime)) {
+		//	state = State::PREPLAYING;
+		//}
 
 		break;
 	case AudioChannel::State::VIRTUAL:
-
+#ifdef _DEBUG
+		std::cout << "STATEMACHINE: CHANNEL IS NOW VIRTUAL\n";
+#endif
 		if (stopRequested) {
 			state = State::STOPPING;
 		}

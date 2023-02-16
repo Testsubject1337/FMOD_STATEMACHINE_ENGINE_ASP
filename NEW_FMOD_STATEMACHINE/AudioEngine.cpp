@@ -208,12 +208,19 @@ void AudioEngine::VirtualizeAudioChannel(int channelID)
 	auto exists = core->channelMap.find(channelID);
 	if (exists != core->channelMap.end()) 
 	{
+#ifdef _DEBUG
+
+		std::cout << "Audio Engine: Setting virtual Flag = true for ChannelID " << channelID << std::endl;
+#endif
 		exists->second->virtualFlag = true;
 	}
 }
 
 void AudioEngine::DeVirtualizeAudioChannel(int channelID)
 {
+#ifdef _DEBUG
+	std::cout << "AudioEngine: Calling Devirtualiziation on ChannelID " << channelID << std::endl;
+#endif
 	auto exists = core->channelMap.find(channelID);
 	if (exists != core->channelMap.end()) 
 	{
