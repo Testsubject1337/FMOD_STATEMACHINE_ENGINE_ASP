@@ -24,8 +24,6 @@
 class AudioEngine
 {
 public:
-	AudioEngine();
-	~AudioEngine();
 
 	// *** Core System Functions *** // 
 	void Initialize();
@@ -52,7 +50,7 @@ public:
 	void VirtualizeAudioChannel(int channelID);
 	void DeVirtualizeAudioChannel(int channelID);
 
-	// *** Effects *** // 
+	// *** Sample Effects *** // 
 	FMOD::Reverb3D* CreateReverb(Vector3 position, FMOD_REVERB_PROPERTIES properties);
 	void SetReverbActive(FMOD::Reverb3D* reverb, bool state);
 	void CreateFmodGeometry(FMOD::Geometry* geometry, int maxPoligons, int maxVertices);

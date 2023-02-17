@@ -4,23 +4,7 @@
 
 
 // ***** create Pointer to make AudioCore usable ***** //
-
 AudioCore* core = nullptr; 
-
-
-// ***** Constructor ***** //
-
-AudioEngine::AudioEngine()
-{
-}
-
-
-// ***** Destructor ***** //
-
-AudioEngine::~AudioEngine()
-{
-}
-
 
 // ******  Core System Function Definitions  ****** //
 

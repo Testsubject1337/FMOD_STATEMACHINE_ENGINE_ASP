@@ -175,7 +175,6 @@ void AudioChannel::Update(float deltaTime)
 		RunFadeOut(deltaTime);
 		UpdateParams();
 
-		////Removed for Demontration-Purposeses. Is Controlliung Virtualization based on Virtual Setting and Distance between Ears and Sound
 		if (!VirtualCheck(false, deltaTime)) {
 			state = State::PREPLAYING;
 		}
