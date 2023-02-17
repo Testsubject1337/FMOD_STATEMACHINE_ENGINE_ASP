@@ -3,10 +3,6 @@
 
 #include <iostream>
 #include "AudioEngine.h"
-#include <chrono>
-#include <thread>
-#include <cmath>
-
 
 
 
@@ -57,9 +53,6 @@ int main()
     SoundData testSound2D;
     testSound2D.is3D = false;
     testSound2D.isLoop = true;
-    //testSound2D.minDistance = 3;
-    //testSound2D.maxDistance = 10;
-    //testSound2D.volume = 1;
     testSound2D.fileName = "2D.mp3";
 
     audioEngine->RegisterSound(testSound2D, true);
