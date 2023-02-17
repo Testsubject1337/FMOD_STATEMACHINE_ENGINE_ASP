@@ -1,2 +1,16 @@
-﻿  NEW_FMOD_STATEMACHINE.cpp
+﻿  AudioChannel.cpp
+  AudioCore.cpp
+  AudioEngine.cpp
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(98,14): warning C4101: "result": Unreferenzierte lokale Variable
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(314,44): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(314,24): warning C4244: "Initialisierung": Konvertierung von "double" in "const float", möglicher Datenverlust
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(316,44): warning C4305: "Initialisierung": Verkürzung von "double" in "float"
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(321,40): warning C4838: Konvertierung von "int" zu "float" erfordert eine einschränkende Konvertierung
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(321,40): warning C4244: "Initialisierung": Konvertierung von "int" in "float", möglicher Datenverlust
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(325,48): warning C4244: "Argument": Konvertierung von "float" in "int", möglicher Datenverlust
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(375,33): warning C4244: "Argument": Konvertierung von "const int" in "float", möglicher Datenverlust
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(388,52): warning C4244: "Argument": Konvertierung von "int" in "float", möglicher Datenverlust
+  NEW_FMOD_STATEMACHINE.cpp
+  Code wird generiert...
+D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\NEW_FMOD_STATEMACHINE\AudioEngine.cpp(301): warning C4715: "AudioEngine::getChannelState": Nicht alle Codepfade geben einen Wert zurück.
   NEW_FMOD_STATEMACHINE.vcxproj -> D:\Projekte\GITHUB\FMOD_STATEMACHINE_ENGINE\x64\Debug\NEW_FMOD_STATEMACHINE.exe

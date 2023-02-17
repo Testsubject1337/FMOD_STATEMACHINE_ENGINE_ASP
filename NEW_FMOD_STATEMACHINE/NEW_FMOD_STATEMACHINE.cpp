@@ -48,7 +48,7 @@ int main()
     testSound3D.virtualDistance = 100;
     
 
-    testSound3D.fileName = "test.wav";
+    testSound3D.fileName = "test.mp3";
 
     currentID = audioEngine->RegisterSound(testSound3D, true);
 
