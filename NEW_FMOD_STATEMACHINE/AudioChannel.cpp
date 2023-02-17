@@ -20,35 +20,38 @@ void AudioChannel::Update(float deltaTime)
 {
 	virtualTimer += deltaTime;
 	auto exists = core.sounds.find(soundID);;
+	
 
-
-	// ********************************* //
-	// ******** State machine ********** //
-	// ********************************* //
+	//====================================================================================================
+	//=====================================BEGIN OF STATEMACHINE==========================================
+	//====================================================================================================
 	switch (state)
 	{
+		//======================================INIT===========================================
 	case AudioChannel::State::INIT:
-		//[[fallthrough]]; 
 		state = State::TOPLAY;
-		break;
-	case AudioChannel::State::TOPLAY:
-		// === TOPLAY ---> STOPPING === //
-		// ============================ //
-		if (stopRequested) {
 
+		break;
+
+
+		//======================================TOPLAY===========================================
+	case AudioChannel::State::TOPLAY:
+
+
+
+		// ******************************** TOPLAY -> STOPPING 
+		if (stopRequested) {
 #ifdef _DEBUG
 			std::cout << "STATEMACHINE STOP REQUESTED! \n";
 #endif
-
 			state = State::STOPPING;
 			return;
 		}
-		// ============================ //
 
-		// === TOPLAY ---> STOPPING/VIRTUAL === //
-		// If the sound is a one shot, stop the sound
-		// Otherwise virtualise the sound
-		// ==================================== //
+
+
+		// ******************************** TOPLAY -> STOPPING/VIRTUAL
+		// If the sound is a one shot, stop the sound. Otherwise virtualise the sound.
 		if (VirtualCheck(true, deltaTime))
 		{
 			if (IsOneShot()) {
@@ -58,31 +61,28 @@ void AudioChannel::Update(float deltaTime)
 				state = State::VIRTUAL;
 			return;
 		}
-		// =================================== //
 
-		// === TOPLAY ---> LOADING === //
+
+
+		//  ********************************  TOPLAY -> LOADING
 		// If the sound isnt loaded and needs to be 
-		// =========================== //
 		if (!core.CheckLoaded(soundID)) {
 #ifdef _DEBUG
-
 			std::cout << "STATEMACHINE CALLED LOAD SOUND! \n";
-
 #endif
 			core.LoadSound(soundID);
 			state = State::LOADING;
 			return;
 		}
-		// =========================== //
 
-		// === TOPLAY ---> PLAYING === //
-		// If there are no special cases,
-		// continue and play the sound
-		// =========================== //
+
+
+		//  ********************************  TOPLAY -> PLAYING
+		// If there are no special cases, continue and play the sound
 		channel = nullptr;
 		exists = core.sounds.find(soundID);
 		if (exists != core.sounds.end()) {
-#ifdef _DEBUG
+#ifdef _DEBUG //If Debug *is* defined, create FMOD-Result for making Debugging easier
 			FMOD_RESULT result;
 			result = core.system->playSound(exists->second, nullptr, true, &channel);
 			if (result != FMOD_OK)
@@ -90,57 +90,56 @@ void AudioChannel::Update(float deltaTime)
 				std::cout << "FMOD ERROR IN STATEMACHINE FOR CHANNEL " << channel << ": " << FMOD_ErrorString(result) << std::endl;
 			}
 #endif
-#ifndef _DEBUG
+#ifndef _DEBUG //If Debug is *not* defined, just play the sound.
 			core.system->playSound(exists->second, nullptr, true, &channel);
 #endif
 		}
 #ifdef _DEBUG
-		else
-		{
-			std::cout << "STATEMACHINE ERROR: SOUND NOT IN SOUNDMAP! \n";
-		}
+		else { std::cout << "STATEMACHINE ERROR: SOUND NOT IN SOUNDMAP! \n"; }
 #endif
+
+		//If Channel exists, set State to "Playing" and set Channel-Attributes, else set State to "Stopping"
 		if (channel) {
 			state = State::PLAYING;
 			FMOD_VECTOR pos{ position.x, position.y, position.z };
 			channel->set3DAttributes(&pos, nullptr);
 			channel->set3DMinMaxDistance(soundData->minDistance, soundData->maxDistance);
+			channel->setMode(FMOD_3D_LINEARSQUAREROLLOFF);
 			channel->setVolume(volume);
-
 			channel->setPaused(false);
 		}
 		else
+			//  ********************************  TOPLAY -> STOPPING
 			state = State::STOPPING;
-		// =========================== //
-
 		break;
+
+
+		//======================================PLAYING===========================================
 	case AudioChannel::State::PLAYING:
 
 		UpdateParams();
 
-		// === PLAYING ---> STOPPING === //
-		// Does the sound need to be stopped?
-		// =========================== //
-		if (/*!IsPlaying() ||*/ stopRequested) {
+		//  ********************************  PLAYING -> STOPPING
+		// Should Stop?
+		if (stopRequested) 
+		{
 			state = State::STOPPING;
 		}
-		// =========================== //
 
-		// === PLAYING ---> VIRTUALISING === //
-		// ================================= //
-		if (virtualFlag == true) {
+		//  ********************************  PLAYING -> VIRTUALIZING
+		// Should be virtualized?
+		if (VirtualCheck(false, deltaTime)) {
 #ifdef _DEBUG
 			std::cout << "STATEMACHINE: Setting State to VIRTUALISING\n";
 #endif
-			state = State::VIRTUALISING;
+			state = State::VIRTUALIZING;
 		}
-		//if (VirtualCheck(false, deltaTime)) { //Took it out for demonstration Purposes
-		//	state = State::VIRTUALISING;
-		//}
 
-		// ================================= //
 
 		break;
+
+
+		//======================================LOADING===========================================
 	case AudioChannel::State::LOADING:
 		// === LOADING ---> TOPLAY === //
 		//Check if the sound is loaded, if it is play it
@@ -151,34 +150,39 @@ void AudioChannel::Update(float deltaTime)
 			std::cout << "STATEMACHINE CHECKING FOR LOADING! \n";
 
 #endif
+			//  ********************************  LOADING -> TOPLAY
 			state = State::TOPLAY;
 		}
 		// =========================== //
 
 		break;
+
+
+		//======================================PREPLAYING===========================================
 	case AudioChannel::State::PREPLAYING:
 		// This state is active when the sound needs to be preplayed to
 		// run the fade in effect.
 		RunFadeIn(deltaTime);
 
 		break;
-	case AudioChannel::State::VIRTUALISING:
 
+
+		//======================================VIRTUALIZING===========================================
+	case AudioChannel::State::VIRTUALIZING:
 #ifdef _DEBUG
 		std::cout << "STATEMACHINE: CHANNEL IS VIRTUALISING\n";
 #endif
 		RunFadeOut(deltaTime);
 		UpdateParams();
 
-		if (virtualFlag = false)
-		{
+		////Removed for Demontration-Purposeses. Is Controlliung Virtualization based on Virtual Setting and Distance between Ears and Sound
+		if (!VirtualCheck(false, deltaTime)) {
 			state = State::PREPLAYING;
 		}
-		//if (!VirtualCheck(false, deltaTime)) {
-		//	state = State::PREPLAYING;
-		//}
-
 		break;
+
+
+		//======================================VIRTUAL===========================================
 	case AudioChannel::State::VIRTUAL:
 #ifdef _DEBUG
 		std::cout << "STATEMACHINE: CHANNEL IS NOW VIRTUAL\n";
@@ -187,6 +191,9 @@ void AudioChannel::Update(float deltaTime)
 			state = State::STOPPING;
 		}
 		else if (!VirtualCheck(false, deltaTime)) {
+#ifdef _DEBUG
+			std::cout << "STATEMACHINE: CHANNEL SHOULD NOT BE VIRTUAL, SINCE VIRTUAL-CHECK IS FALSE BASED ON POSITION!";
+#endif
 			if (virtualSetting == VirtualSetting::RESTART) {
 				state = State::INIT;
 			}
@@ -199,6 +206,9 @@ void AudioChannel::Update(float deltaTime)
 			}
 		}
 		break;
+
+
+		//======================================STOPPING===========================================
 	case AudioChannel::State::STOPPING:
 		//Run fade out logic and stop the channel
 #ifdef _DEBUG
@@ -215,17 +225,35 @@ void AudioChannel::Update(float deltaTime)
 			return;
 		}
 		break;
+
+
+		//======================================STOPPED===========================================
 	case AudioChannel::State::STOPPED:
 		break;
 	default:
 		break;
 	}
+
+//====================================================================================================
+//======================================END OF STATEMACHINE===========================================
+//====================================================================================================
 }
+
+
+
+
 
 void AudioChannel::UpdateParams()
 {
+#ifdef _DEBUG
+	std::cout << "CHANNEL: UpdateParams() called.\n";
+#endif
 	//Update virtual flags and parameters 
 	if (updateFlags.test(static_cast<size_t>(UpdateFlag::POSITION))) {
+#ifdef _DEBUG
+		std::cout << "CHANNEL: UpdateFlag recognized as true. Updating Position to\n";
+		std::cout << position.x << ", " << position.y << ", " << position.z << std::endl;
+#endif
 		FMOD_VECTOR newPosition = { position.x, position.y, position.z };
 		channel->set3DAttributes(&newPosition, nullptr);
 		SetUpdateFlag(UpdateFlag::POSITION, false);
@@ -235,11 +263,16 @@ void AudioChannel::UpdateParams()
 //Run the fade in logic for a channel
 void AudioChannel::RunFadeIn(float deltaTime)
 {
+	const float maxDeltaTime = virtualFadeInTime;
+	if (deltaTime > maxDeltaTime) {
+		deltaTime = 0.1f; //limiting delta-time for avoiding failed fade-ins due to performance-issues
+	}
 	float currentVolume;
 	channel->getVolume(&currentVolume);
 	float newVolume = currentVolume + deltaTime / virtualFadeInTime;
 	if (newVolume >= volume) {
 		if (state == State::PREPLAYING) {
+			
 			state = State::PLAYING;
 		}
 	}
@@ -257,7 +290,7 @@ void AudioChannel::RunFadeOut(float deltaTime)
 	if (state == State::STOPPING) {
 		newVolume = currentVolume - deltaTime / stopFadeOutTime;
 	}
-	else if (state == State::VIRTUALISING) {
+	else if (state == State::VIRTUALIZING) {
 		newVolume = currentVolume - deltaTime / virtualFadeOutTime;
 		//newVolume = currentVolume - virtualFadeOutTime * deltaTime;
 	}
@@ -266,7 +299,7 @@ void AudioChannel::RunFadeOut(float deltaTime)
 			channel->stop();
 			state = State::STOPPED;
 		}
-		else if (state == State::VIRTUALISING) {
+		else if (state == State::VIRTUALIZING) {
 			state = State::VIRTUAL;
 			if (virtualSetting == VirtualSetting::RESTART) {
 				channel->stop();
@@ -286,12 +319,9 @@ void AudioChannel::RunFadeOut(float deltaTime)
 	}
 }
 
-bool AudioChannel::VirtualCheck(bool allowOneShot, float deltaTime)
+bool AudioChannel::VirtualCheck(bool allowOneShot, float deltaTime) 
 {
-	/*if (virtualTimer < virtualCheckVirtualPeriod) {
-		return (state == State::VIRTUALISING || state == State::VIRTUAL);
-	}*/
-	if (isVirtFlagEffective) {
+	if (!isVirtFlagEffective) {
 		return virtualFlag;
 	}
 	else {
@@ -317,3 +347,5 @@ bool AudioChannel::IsOneShot()
 
 	return false;
 }
+
+

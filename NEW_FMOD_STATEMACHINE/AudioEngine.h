@@ -6,28 +6,20 @@
 #include <map>
 #include <iostream>
 #include "Vector3.h"
-
+#include <chrono>
+#include <thread>
+#include <cmath>
+#include "SoundData.h"
 
 // ********************************* Audio Engine ********************************* //
-//This Audio Engine is a state machine oriented System for application
-//in games, 3D or 2D. Consisting of AudioCore, housing the state machine 
-//architecture and core functionality, and the AudioEngine where all of this 
-//is wrapped and applied. The engine is designed to be expandable and maintainable,
-//with its state machine design meaning new features in the form of states can be
-//added at the developers desire. 
+// This is a system designed for use in games, both 2D and 3D, that is made up of two 
+// main parts : the AudioCore, which handles the core functionalityand state machine 
+// architecture, and the AudioEngine, which combinesand applies these components.
+// The state machine design allows for easy expansionand maintenance, 
+// as new features can be added in the form of new states as desired by developers.
 // ******************************************************************************** //
 
 
-struct SoundData {
-	std::string fileName;
-	float volume;
-	float minDistance;
-	float maxDistance;
-	float virtualDistance;
-	bool is3D;
-	bool isLoop;
-	bool isStream;
-};
 
 class AudioEngine
 {
@@ -66,5 +58,13 @@ public:
 	void CreateFmodGeometry(FMOD::Geometry* geometry, int maxPoligons, int maxVertices);
 	void GetOcclusion(FMOD_VECTOR* listenerPos, FMOD_VECTOR* sourcePos, float directOcclusion, float reverbOcclusion);
 	void SetOcclusion(int channelID, float directOcclusion, float reverbOcclusion);
+
+	// *** FUN AND DEBUG-FEATURES *** //
+	void moveSoundInCircle(int channelID, int durationInSeconds, int radius); //Time is not considered precisely - only an approximate value.
+	void moveSoundToPosition(int channelID, Vector3 targetPosition, int durationInSeconds); //Time is not considered precisely - only an approximate value.
+	bool isChannelVirtual(int channelID); //Debug
+	std::string getChannelState(int channelID); //Debug
+	float getChannelVolume(int channelID); //Debug
+
 };
 
